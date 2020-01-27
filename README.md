@@ -25,7 +25,33 @@ $$ P\left(\text{cytoplasm}\right) \rightleftharpoons P\left(\text{cytoplasm}\rig
         G & G^* & mRNA & P
     \end{bmatrix} ^T
 \]
-### transform matrix
+### reaction matrix
 \[
     R_{nuclear} =
+    \begin{bmatrix}
+        1 & 0 & 0 & 1 \\
+        0 & 1 & 0 & 0 \\
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0    
+    \end{bmatrix},
+    P_{nuclear}  =
+    \begin{bmatrix}
+        0 & 1 & 0 & 0 \\
+        1 & 0 & 0 & 1 \\
+        1 & 0 & 1 & 0 \\
+        0 & 1 & 1 & 0
+    \end{bmatrix}
+    \\
+    R_{cytoplasm} =
+    \begin{bmatrix}
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1 \\
+        0 & 0 & 1 & 0
+    \end{bmatrix},
+    P_{cytoplasm} =
+    \begin{bmatrix}
+        0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0
+    \end{bmatrix}
 \]
