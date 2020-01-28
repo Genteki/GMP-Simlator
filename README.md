@@ -3,6 +3,24 @@
 
 It's a simulator program for DNA->mRNA->protein reactions system in cells
 
+## Usage
+### import
+Directly import the package
+> from algorithm.simulator import *
+
+if you cannot import the package successfully, you should add you project path to sys.path:
+> import sys  
+sys.path.append("$your-project-path")
+### initialize an example
+> myCell = Cell(self, n, init_ss, layer,
+nuclearReactant, nuclearProduct, nuclearRate,
+cytoplasmReactant, cytoplasmProduct, cytoplsamRate,
+ncSpread, cnSpread, ccSpread)
+
+I've provide an example in *algorithm/simulatorTest.py* for the construction function.
+### simulation
+> myCell.simulate(maxTime)
+
 ## Reactions
 ### Nuclear
 $$ G+P \rightleftharpoons G^*  $$
