@@ -11,11 +11,11 @@ class System:
         self.products = products
         self.reaction_rate = reaction_rate
         self.spread = np.diag([0]*n)
-        if prev_spread_rate:
+        if not (prev_spread_rate is None):
             self.prev_spread_rate = prev_spread_rate
         else:
             self.prev_spread_rate = np.zeros(n)
-        if next_spread_rate:
+        if not (next_spread_rate is None):
             self.next_spread_rate = next_spread_rate
         else:
             self.next_spread_rate = np.zeros(n)
@@ -27,18 +27,18 @@ class System:
         p1 = np.zeros(self.reactants.shape[0])
         prod = self.ss**self.reactants
         for i in range(self.reactants.shape[0]):
-            p1[i] = np.products(prod)*self.reaction_rate
+            p1[i] = np.product(prod[i])*self.reaction_rate[i]
         # for spreading
         p2 = np.append(self.ss*self.next_spread_rate, self.ss*self.prev_spread_rate)
         # reaction, next, prev
         return np.append(p1,p2)
 
     def getDeltaT(self, p):
-        return np.random.choice(range(self.reactants.shape[0]), p=p/p.sum())
+        return -np.log(np.random.random()) / p.sum()
 
     def determineReaction(self, p):
         r = self.reactants.shape[0]
-        i = np.random.choice(range(r)+self.n*2, p=p/p.sum())
+        i = np.random.choice(range(r+self.n*2), p=p/p.sum())
         if i < r:
             return (0, self.reactants[i], self.products[i])
         elif i < r+self.n:
@@ -54,7 +54,7 @@ class Cell:
     nuclearReactant=np.array([[]]), nuclearProduct=np.array([[]]), nuclearRate=np.array([]), 
     cytoplasmReactant=np.array([[]]), cytoplasmProduct=np.array([[]]), cytoplsamRate = np.array([]), 
     ncSpread=None, cnSpread=None, ccSpread=None):
-        self.time = np.array([0]*layer)
+        self.time = np.array([0.]*layer)
         self.regions = []
         nuclear = System(n, init_ss, reactants=nuclearReactant, reaction_rate=nuclearRate,
         products=nuclearProduct, next_spread_rate=ncSpread)
@@ -93,7 +93,7 @@ class Cell:
                 self.time[i]+=dt
                 x, re, pr = self.regions[i].determineReaction(p)
                 self.regions[i].ss-=re
-                self.regions[i+x]+=pr
+                self.regions[i+x].ss+=pr
 
             print(self.time.max(), self.regions[0].ss)
         
