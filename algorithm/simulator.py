@@ -26,7 +26,7 @@ class System:
         # for chemstry reaction
         p1 = np.zeros(self.reactants.shape[0])
         prod = self.ss**self.reactants
-        for i in range(self.reaction.shape[0]):
+        for i in range(self.reactants.shape[0]):
             p1[i] = np.products(prod)*self.reaction_rate
         # for spreading
         p2 = np.append(self.ss*self.next_spread_rate, self.ss*self.prev_spread_rate)
@@ -38,10 +38,10 @@ class System:
 
     def determineReaction(self, p):
         r = self.reactants.shape[0]
-        i = np.random.choice(range(r)+n*2, p=p/p.sum())
+        i = np.random.choice(range(r)+self.n*2, p=p/p.sum())
         if i < r:
             return (0, self.reactants[i], self.products[i])
-        elif i < r+n:
+        elif i < r+self.n:
             return (1, self.spread[i-r], self.spread[i-r])
         else:
             return (-1, self.spread[i-2*r], self.spread[i-2*r])
