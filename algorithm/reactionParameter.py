@@ -20,13 +20,13 @@ paramsDict = {
     ]),
     "reactantCytoplasm": np.array([
         [0,0,1,0],
-        [0,0,0,1],
-        [0,0,1,0]
+        [0,0,1,0],
+        [0,0,0,1]
     ]),
     "productCytoplasm": np.array([
-        [0,0,0,1],
-        [0,0,0,1],
-        [0,0,1,0]
+        [0,0,1,1],
+        [0,0,0,0],
+        [0,0,0,0]
     ])
 }
 class Parameters:
@@ -37,7 +37,7 @@ class Parameters:
         self.rho1 = 1; self.rho2 = 1
         self.theta = 1; self.phi = 1
         self.sigma1 = 1; self.sigma2 = 1
-        self.epsln1 = 1; self.epsln2 = 0; self.epsln3 = 1
+        self.epsln1 = 1; self.epsln2 = 1; self.epsln3 = 1
 
         self.reactantNuclear = np.array([
             [1,0,0,1],
@@ -53,26 +53,27 @@ class Parameters:
         ])
         self.reactantCytoplasm = np.array([
             [0,0,1,0],
-            [0,0,0,1],
-            [0,0,1,0]
+            [0,0,1,0],
+            [0,0,0,1]
         ])
-        self.productNuclear = np.array([
-            [0,0,0,1],
-            [0,0,0,1],
-            [0,0,1,0]
+        self.productCytoplasm = np.array([
+            [0,0,1,1],
+            [0,0,0,0],
+            [0,0,0,0]
         ])
 
-        def spreadRateNC(self):
-            return np.array([0,0,self.sigma1,self.epsln2])
+    def spreadRateNC(self):
+        return np.array([0,0,self.sigma1,self.epsln2])
 
-        def spreadRateCN(self):
-            return np.array([0,0,0,self.epsln2])
+    def spreadRateCN(self):
+        return np.array([0,0,0,self.epsln2])
 
-        def spreadRateCC(self):
-            return np.array([0,0,self.sigma2,self.epsln3])
+    def spreadRateCC(self):
+        return np.array([0,0,self.sigma2,self.epsln3])
 
-        def reactionRateNuclear(self):
-            return np.array([self.gamma1, self.gamma2, self.rho1, self.rho2])
+    def reactionRateNuclear(self):
+        return np.array([self.gamma1, self.gamma2, self.rho1, self.rho2])
 
-        def reactionRateCytoplasm(self):
-            return np.array([self.phi, self.theta, 1])
+    def reactionRateCytoplasm(self):
+        return np.array([self.phi, self.theta, 1])
+    

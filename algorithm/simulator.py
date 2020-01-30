@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 class System:
@@ -10,7 +11,7 @@ class System:
         self.reactants = reactants
         self.products = products
         self.reaction_rate = reaction_rate
-        self.spread = np.diag([0]*n)
+        self.spread = np.diag([1]*n)
         if not (prev_spread_rate is None):
             self.prev_spread_rate = prev_spread_rate
         else:
@@ -42,9 +43,10 @@ class System:
         if i < r:
             return (0, self.reactants[i], self.products[i])
         elif i < r+self.n:
+            #print(self.spread)
             return (1, self.spread[i-r], self.spread[i-r])
         else:
-            return (-1, self.spread[i-2*r], self.spread[i-2*r])
+            return (-1, self.spread[i-self.n-r], self.spread[i-self.n-r])
 
     def reset(self):
         self.ss = self.init_ss
@@ -55,17 +57,18 @@ class Cell:
     cytoplasmReactant=np.array([[]]), cytoplasmProduct=np.array([[]]), cytoplsamRate = np.array([]), 
     ncSpread=None, cnSpread=None, ccSpread=None):
         self.time = np.array([0.]*layer)
+        self.layer = layer
         self.regions = []
         nuclear = System(n, init_ss, reactants=nuclearReactant, reaction_rate=nuclearRate,
         products=nuclearProduct, next_spread_rate=ncSpread)
         self.regions.append(nuclear)
-        if n == 2:
+        if layer == 2:
             firstCytoplasm = System(n, np.zeros(n), reactants=cytoplasmReactant,
             products=cytoplasmProduct, reaction_rate=cytoplsamRate, prev_spread_rate=cnSpread,
             next_spread_rate=np.zeros(n))
             self.regions.append(firstCytoplasm)
             pass
-        elif n >= 3:
+        elif layer >= 3:
             firstCytoplasm = System(n, np.zeros(n), reactants=cytoplasmReactant,
             products=cytoplasmProduct, reaction_rate=cytoplsamRate, prev_spread_rate=cnSpread,
             next_spread_rate=ccSpread)
@@ -73,7 +76,7 @@ class Cell:
             products=cytoplasmProduct, reaction_rate=cytoplsamRate, prev_spread_rate=ccSpread,
             next_spread_rate=np.zeros(n))
             self.regions.append(firstCytoplasm)
-            for i in range(2,n-1):
+            for i in range(2,layer-1):
                 newCytoplasm = System(n, np.zeros(n), reactants=cytoplasmReactant,
                 products=cytoplasmProduct, reaction_rate=cytoplsamRate,
                 prev_spread_rate=ccSpread, next_spread_rate=ccSpread)
@@ -82,6 +85,8 @@ class Cell:
         
 
     def simulate(self, maxTime=10):
+        df = pd.DataFrame(columns=["t","A","B","C","D"])
+        df = df.set_index("t")
         while self.time.max() <= maxTime:
             i = np.argmin(self.time)
             p = self.regions[i].getProspencities()
@@ -94,8 +99,16 @@ class Cell:
                 x, re, pr = self.regions[i].determineReaction(p)
                 self.regions[i].ss-=re
                 self.regions[i+x].ss+=pr
-
-            print(self.time.max(), self.regions[0].ss)
+            sst = np.zeros(self.regions[0].n)
+            for region in self.regions:
+                sst+=region.ss
+            df.loc[self.time.max()] = sst
+        self.reset()
+        return df
         
+
+    def reset(self):
         for region in self.regions:
             region.reset()
+        self.time = np.zeros(self.layer)
+
